@@ -1,0 +1,8 @@
+Sum of squares = 8.69    Mean square = 0.02    n = 498 
+Sum of squares = 10.8    Mean square = 0.02    n = 499 
+Sum of squares = 9.43    Mean square = 0.02    n = 499 
+Sum of squares = 8.83    Mean square = 0.02    n = 498 
+Overall (Sum over all 498 folds) 
+    ms 
+0.0189 
+
