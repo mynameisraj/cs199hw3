@@ -1,11 +1,19 @@
 % vim: textwidth=80
 \documentclass{article}
+
+% packages
 \usepackage[pdftex]{graphicx}
 \usepackage{listings}
+\usepackage{float}
+
+% set the code to wrap and have box
 \lstset{
     frame=single,
     breaklines=true
 }
+
+% set the graphics path
+\graphicspath{ {./plots/} }
 
 \begin{document}
 
@@ -24,6 +32,14 @@
 Upon building a linear regression, we noticed that
 there are a lot of data points which were missing values. In order to build our
 linear regression, we removed these values.
+
+\section{Sample plot}
+% figure with H flag (put it here)
+\begin{figure}[H]
+\centering
+\includegraphics[width=3.0in]{part1a.pdf}
+\caption{Plot one}\label{fig_container} 
+\end{figure}
 
 \section{R Code}
 \begin{lstlisting}[language=r]
