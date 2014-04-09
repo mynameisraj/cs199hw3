@@ -57,13 +57,15 @@ fit<-lm(V128 ~ V6+ V7+ V8+ V9+ V10+ V11+ V12+ V13+ V14+ V15+ V16+ V17+ V18+ V19+
 cv.lm(df=drop_cols, fit, m=4)
 \end{lstlisting}
 
-\subsection{Linear Regression plot}
+\subsection{Linear Regression Plot}
 %H flag - (put it here)
 \begin{figure}[H]
 \centering
 \includegraphics[width=3.0in]{part1a.pdf}
-\caption{Plot one}\label{fig_container} 
+\caption{This graph shows the predicted fit across four different cross-validation folds of our data. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
 \end{figure}
+
+Here is a plot that we made.
 
 \subsection{BoxCox Transformation - R code}
 \begin{lstlisting}[language=r]
@@ -102,7 +104,7 @@ cv.lm(df=crime_lambda1, fit2, m=4)
 \begin{figure}[H]
 \centering
 \includegraphics[width=3.0in]{part1b.pdf}
-\caption{Plot two}\label{fig_container} 
+\caption{This graph shows the predicted fit across four different cross-validation folds of our data after performing the boxcox transformation. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
 \end{figure}
 
 \section{KNN}
@@ -162,7 +164,7 @@ cv.lm(df=as.data.frame(imputed$data), fit, m=4)
 \begin{figure}[H]
 \centering
 \includegraphics[width=3.0in]{impute.pdf}
-\caption{Plot two}\label{fig_container} 
+\caption{This graph shows the predicted fit across four different cross-validation folds of our imputed data. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
 \end{figure}
 
 \section{Modified Nearest Neighbor Search}
