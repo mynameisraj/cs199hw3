@@ -16,10 +16,9 @@
 \graphicspath{ {./plots/} }
 
 \begin{document}
-
 \title{CS 199 BD Homework 3}
-\author{Jay Bensal, Richard Lee, Raj Ramamurthy\\
-  NetIDs: bensal2, rlee46, rlee46}
+\author{Richard Lee, Raj Ramamurthy, Jay Bensal\\
+  NetIDs: rlee46, rmmrthy2 , bensal2}
 
 % Title
 \maketitle
@@ -31,65 +30,140 @@
 \section{Linear Regression}
 Upon building a linear regression, we noticed that
 there are a lot of data points which were missing values. In order to build our
-linear regression, we removed these values.
+linear regression, we removed these values. 
 
-\section{Sample plot}
-% figure with H flag (put it here)
+\subsection{R Code - Linear Regression}
+\begin{lstlisting}[language=r]
+#read the CSV file
+crime<-read.csv('communities.data', header=FALSE)
+
+#remove nonpredictive variables
+crime<-crime[c(-1,-2,-3,-4,-5)]
+crime<-crime[sample(nrow(crime)),]
+
+#replace all '?' with NA
+crime[crime == '?'] <- NA
+
+#only take the variables w/ all the values
+drop_cols <- crime[complete.cases(crime), ]
+
+#load Data Analysis and Graphics library
+library(DAAG)
+
+#perform multivariate linear regression
+fit<-lm(V128 ~ V6+ V7+ V8+ V9+ V10+ V11+ V12+ V13+ V14+ V15+ V16+ V17+ V18+ V19+ V20+ V21+ V22+ V23+ V24+ V25+ V26+ V27+ V28+ V29+ V30+ V32+ V33+ V34+ V35+ V36+ V37+ V38+ V39+ V40+ V41+ V42+ V43+ V44+ V45+ V46+ V47+ V48+ V49+ V50+ V51+ V52+ V53+ V54+ V55+ V56+ V57+ V58+ V59+ V60+ V61+ V62+ V63+ V64+ V65+ V66+ V67+ V68+ V69+ V70+ V71+ V72+ V73+ V74+ V75+ V76+ V77+ V78+ V79+ V80+ V81+ V82+ V83+ V84+ V85+ V86+ V87+ V88+ V89+ V90+ V91+ V92+ V93+ V94+ V95+ V96+ V97+ V98+ V99+ V100+ V101+ V119+ V120+ V121+ V126, data=drop_cols)
+
+#perform k-fold cross validation
+cv.lm(df=drop_cols, fit, m=4)
+\end{lstlisting}
+
+\subsection{Linear Regression plot}
+%H flag - (put it here)
 \begin{figure}[H]
 \centering
 \includegraphics[width=3.0in]{part1a.pdf}
 \caption{Plot one}\label{fig_container} 
 \end{figure}
 
-\section{R Code}
+\subsection{BoxCox Transformation - R code}
 \begin{lstlisting}[language=r]
-crime<-read.csv('communities.data', header=FALSE)
-crime<-crime[c(-1,-2,-3,-4,-5)]
-crime<-crime[sample(nrow(crime)),]
-crime[crime == '?'] <- NA
-#replace all '?' with NA
-drop_cols <- crime[complete.cases(crime), ] # only take the variables w/ all the values
-library(DAAG)
-fit<-lm(V128 ~ V6+ V7+ V8+ V9+ V10+ V11+ V12+ V13+ V14+ V15+ V16+ V17+ V18+ V19+ V20+ V21+ V22+ V23+ V24+ V25+ V26+ V27+ V28+ V29+ V30+ V32+ V33+ V34+ V35+ V36+ V37+ V38+ V39+ V40+ V41+ V42+ V43+ V44+ V45+ V46+ V47+ V48+ V49+ V50+ V51+ V52+ V53+ V54+ V55+ V56+ V57+ V58+ V59+ V60+ V61+ V62+ V63+ V64+ V65+ V66+ V67+ V68+ V69+ V70+ V71+ V72+ V73+ V74+ V75+ V76+ V77+ V78+ V79+ V80+ V81+ V82+ V83+ V84+ V85+ V86+ V87+ V88+ V89+ V90+ V91+ V92+ V93+ V94+ V95+ V96+ V97+ V98+ V99+ V100+ V101+ V119+ V120+ V121+ V126, data=drop_cols)
-cv.lm(df=drop_cols, fit, m=4)
+#load in MASS library
 library('MASS')
+#pick a lambda value based on BoxCox
 boxcox(fit, lambda = seq(0, 1, 1/10), plotit=TRUE)
+\end{lstlisting}
+
+\subsection{Boxcox plot}
+%H flag - (put it here)
+\begin{figure}[H]
+\centering
+\includegraphics[width=3.0in]{boxcox.pdf}
+\caption{We picked a value of l = 0.3 based on this boxcox graph. }\label{fig_container} 
+\end{figure}
+
+\subsection{Applying the BoxCox Transformation}
+\begin{lstlisting}[language=r]
 crime_lambda1 = drop_cols
+
+#apply the boxcox transformation to the data
 for (i in 1:nrow(crime_lambda1)){
   crime_lambda1[i, ncol(crime_lambda1)] = (crime_lambda1[i, ncol(crime_lambda1)]^0.3-1)/0.3
 }
 
+#perform multivariate linear regression based on new data
 fit2<-lm(V128 ~ V6+ V7+ V8+ V9+ V10+ V11+ V12+ V13+ V14+ V15+ V16+ V17+ V18+ V19+ V20+ V21+ V22+ V23+ V24+ V25+ V26+ V27+ V28+ V29+ V30+ V32+ V33+ V34+ V35+ V36+ V37+ V38+ V39+ V40+ V41+ V42+ V43+ V44+ V45+ V46+ V47+ V48+ V49+ V50+ V51+ V52+ V53+ V54+ V55+ V56+ V57+ V58+ V59+ V60+ V61+ V62+ V63+ V64+ V65+ V66+ V67+ V68+ V69+ V70+ V71+ V72+ V73+ V74+ V75+ V76+ V77+ V78+ V79+ V80+ V81+ V82+ V83+ V84+ V85+ V86+ V87+ V88+ V89+ V90+ V91+ V92+ V93+ V94+ V95+ V96+ V97+ V98+ V99+ V100+ V101+ V119+ V120+ V121+ V126, data=crime_lambda1)
+
+#perform k-fold cross validation on the new model
 cv.lm(df=crime_lambda1, fit2, m=4)
+\end{lstlisting}
 
-################## KNN ####################################
+\subsection{BoxCox Graph}
+%H flag - (put it here)
+\begin{figure}[H]
+\centering
+\includegraphics[width=3.0in]{part1b.pdf}
+\caption{Plot two}\label{fig_container} 
+\end{figure}
 
+\section{KNN}
+\begin{lstlisting}[language=r]
 comm<-read.csv('communities.data', header=FALSE);
-comm<-comm[c(-1,-2,-3,-4,-5)] 
-#delete the first 5 vars which are not predictive
 
+#delete the first 5 vars which are not predictive
+comm<-comm[c(-1,-2,-3,-4,-5)] 
+
+#load FNN library
 library('FNN')
-#comm = comm[sample(nrow(comm)),]
-comm[comm == '?'] <- NA
+
 #replace all '?' with NA
-full <- comm[complete.cases(comm),]
+comm[comm == '?'] <- NA
+
 #then only take the ones w/ all the values
+full <- comm[complete.cases(comm),]
 lapply(full, as.numeric)
 
 full = subset(full, select=-c(V31, V102, V103, V104, V105, V106, V107, V108, V109, V111, V110, V112, V113, V114, V115, V116, V117, V118, V122, V123, V124, V125, V127))
 comm_full = subset(comm, select=-c(V31, V102, V103, V104, V105, V106, V107, V108, V109, V111, V110, V112, V113, V114, V115, V116, V117, V118, V122, V123, V124, V125, V127))
-#do some nearest neighbor stuff
+
+#Perform nearest neighbor search with 21 neighbors
 wtrain <- full[1:100,1:(ncol(full)-1)]
 wtrl <- full[1:100,(ncol(full))]
 wtest <- full[101:200, 1:(ncol(full)-1)]
 wtel <- full[101:200, ncol(full)]
-#results = knn(wtrain, wtest, wtrl, k = 10, algorithm="cover_tree")
 results = knn(wtrain, wtest, wtrl, k = 21, algorithm="cover_tree")
+
 plot(as.numeric(results), as.numeric(wtel))
+\end{lstlisting}
+
+\subsection{KNN Graph}
+%H flag - (put it here)
+\begin{figure}[H]
+\centering
+\includegraphics[width=3.0in]{knn.pdf}
+\caption{Plot two}\label{fig_container} 
+\end{figure}
+
+\section{Impute}
+\begin{lstlisting}[language=r]
+#load impute library
 library(impute)
+#impute the data
 imputed=impute.knn(as.matrix(comm_full), k=10)
+
+#perform multivariate linear regression
 fit<-lm(V128 ~ V6+ V7+ V8+ V9+ V10+ V11+ V12+ V13+ V14+ V15+ V16+ V17+ V18+ V19+ V20+ V21+ V22+ V23+ V24+ V25+ V26+ V27+ V28+ V29+ V30+ V32+ V33+ V34+ V35+ V36+ V37+ V38+ V39+ V40+ V41+ V42+ V43+ V44+ V45+ V46+ V47+ V48+ V49+ V50+ V51+ V52+ V53+ V54+ V55+ V56+ V57+ V58+ V59+ V60+ V61+ V62+ V63+ V64+ V65+ V66+ V67+ V68+ V69+ V70+ V71+ V72+ V73+ V74+ V75+ V76+ V77+ V78+ V79+ V80+ V81+ V82+ V83+ V84+ V85+ V86+ V87+ V88+ V89+ V90+ V91+ V92+ V93+ V94+ V95+ V96+ V97+ V98+ V99+ V100+ V101+ V119+ V120+ V121+ V126, data=as.data.frame(imputed$data))
+
+#perform k-fold cross validation
 cv.lm(df=as.data.frame(imputed$data), fit, m=4)
 \end{lstlisting}
 
+\subsection{Impute plot}
+%H flag - (put it here)
+\begin{figure}[H]
+\centering
+\includegraphics[width=3.0in]{impute.pdf}
+\caption{Plot two}\label{fig_container} 
+\end{figure}
+
+\section{Modified Nearest Neighbor Search}
 \end{document}

@@ -1,16 +1,8 @@
-
-fold1
 Sum of squares = 3.78    Mean square = 0.05    n = 79 
-
-fold2
 Sum of squares = 2.3    Mean square = 0.03    n = 80 
-
-fold3
 Sum of squares = 3.48    Mean square = 0.04    n = 80 
-
-fold 4 
 Sum of squares = 3.86    Mean square = 0.05    n = 80 
 
-Overall (Sum over all 80 folds) 
-0.0421ms
+Overall 
+0.0421 ms
 

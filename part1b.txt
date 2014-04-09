@@ -1,11 +1,7 @@
-fold 1
-Sum of squares = 11.8    Mean square = 0.15    n = 79 i
-fold 2
+Sum of squares = 11.8    Mean square = 0.15    n = 79
 Sum of squares = 9.22    Mean square = 0.12    n = 80 
-fold 3
 Sum of squares = 11.2    Mean square = 0.14    n = 80 
-fold4
 Sum of squares = 12.8    Mean square = 0.16    n = 80 
 
-Overall (Sum over all 80 folds)  
+Overall
 0.141 ms
