@@ -29,10 +29,12 @@
 % transformation make things better?
 \section{Linear Regression}
 Upon building a linear regression, we noticed that
-there are a lot of data points which were missing values. In order to build our
-linear regression, we removed these values. 
+there are a lot of data points which were missing values. In order to perform a more accurate 
+linear regression, we removed these values. We then performed linear regression twice; once on this model and once after performing a  Box-Cox transformation. Our code and impressions are documented below.
 
 \subsection{R Code - Linear Regression}
+This is the commented R code that we used to create a linear model of the original data.
+
 \begin{lstlisting}[language=r]
 #read the CSV file
 crime<-read.csv('communities.data', header=FALSE)
@@ -65,29 +67,42 @@ cv.lm(df=drop_cols, fit, m=4)
 \caption{This graph shows the predicted fit across four different cross-validation folds of our data. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
 \end{figure}
 
-Here is a plot that we made.
+Though this graph does a reasonable job of predicting fit, there are also several problematic datapoints which you can see at the top right of the plot. Of the two thousand original data points, only three-hundred and nineteen were complete. It's possible that the low number of data points had an impact on the accuracy of our results because the model built wasn't as robust as it could've been. The metrics for four different folds are shown below.\\ 
 
-\subsection{BoxCox Transformation - R code}
+Sum of squares = 3.78    Mean square = 0.05    n = 79\\ 
+Sum of squares = 2.30    Mean square = 0.03    n = 80\\
+Sum of squares = 3.48    Mean square = 0.04    n = 80\\ 
+Sum of squares = 3.86    Mean square = 0.05    n = 80\\ 
+
+Overall - 0.0421 ms
+
+The mean squared error of this model was 4.21\% . 
+
+
+\subsection{Box-Cox Transformation - R code}
+Here is the code we used to pick our lambda value.
 \begin{lstlisting}[language=r]
 #load in MASS library
 library('MASS')
-#pick a lambda value based on BoxCox
+#pick a lambda value based on Box-Cox
 boxcox(fit, lambda = seq(0, 1, 1/10), plotit=TRUE)
 \end{lstlisting}
 
-\subsection{Boxcox plot}
+\subsection{Box-Cox plot}
 %H flag - (put it here)
 \begin{figure}[H]
 \centering
 \includegraphics[width=3.0in]{boxcox.pdf}
-\caption{We picked a value of l = 0.3 based on this boxcox graph. }\label{fig_container} 
+\caption{We picked a value of l = 0.3 based on this Box-Cox graph. }\label{fig_container} 
 \end{figure}
 
-\subsection{Applying the BoxCox Transformation}
+\subsection{Applying the Box-Cox Transformation}
+The code below transforms our data, performs a new linear regression, and then performs k-fold cross validation with the new linear model. 
+
 \begin{lstlisting}[language=r]
 crime_lambda1 = drop_cols
 
-#apply the boxcox transformation to the data
+#apply the Box-Cox transformation to the data
 for (i in 1:nrow(crime_lambda1)){
   crime_lambda1[i, ncol(crime_lambda1)] = (crime_lambda1[i, ncol(crime_lambda1)]^0.3-1)/0.3
 }
@@ -99,15 +114,29 @@ fit2<-lm(V128 ~ V6+ V7+ V8+ V9+ V10+ V11+ V12+ V13+ V14+ V15+ V16+ V17+ V18+ V19
 cv.lm(df=crime_lambda1, fit2, m=4)
 \end{lstlisting}
 
-\subsection{BoxCox Graph}
+\subsection{Predicted fit after Box-Cox transformation}
 %H flag - (put it here)
 \begin{figure}[H]
 \centering
 \includegraphics[width=3.0in]{part1b.pdf}
-\caption{This graph shows the predicted fit across four different cross-validation folds of our data after performing the boxcox transformation. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
+\caption{This graph shows the predicted fit across four different cross-validation folds of our data after performing the Box-Cox transformation. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
 \end{figure}
 
+At first glance, applying the Box-Cox transformation seems to have paid off. The data points in this graph seem much closer to the line of best fit. In addition, this model seems to have improved when predicting the most problematic data points for the previous model. It's possible that having a lower number of data points affected the Box-Cox transformation more than it effected the untransformed data. The metrics for four different folds are shown below.\\ 
+
+Sum of squares = 11.8    Mean square = 0.15    n = 79\\
+Sum of squares = 9.22    Mean square = 0.12    n = 80\\ 
+Sum of squares = 11.2    Mean square = 0.14    n = 80\\ 
+Sum of squares = 12.8    Mean square = 0.16    n = 80\\ 
+
+Overall - 0.141 ms
+
+The mean squared error of this model was 14.1\%. 
+
 \section{KNN}
+Similar to when we performed a linear regression above, in order to perform a more accurate 
+linear regression, we removed the data points with incomplete values. We then performed a k-nearest neighbors regression. Our code and impressions are documented below.
+
 \begin{lstlisting}[language=r]
 comm<-read.csv('communities.data', header=FALSE);
 
@@ -146,6 +175,8 @@ plot(as.numeric(results), as.numeric(wtel))
 \end{figure}
 
 \section{Impute}
+In this section, we imputed the data and performed linear regression. Our code, results, and impressions are below. 
+
 \begin{lstlisting}[language=r]
 #load impute library
 library(impute)
@@ -166,6 +197,18 @@ cv.lm(df=as.data.frame(imputed$data), fit, m=4)
 \includegraphics[width=3.0in]{impute.pdf}
 \caption{This graph shows the predicted fit across four different cross-validation folds of our imputed data. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
 \end{figure}
+
+The linear model based off of the imputed data provided the highest accuracy of the linear models that we built. One possible reason for this could be the high number of data points. Though every data points wasn't as complete as could be, the sheer number of data points used to build the model helped improve accuracy. The metrics for four different folds are shown below.\\ 
+
+Sum of squares = 8.69    Mean square = 0.02    n = 498\\ 
+Sum of squares = 10.8    Mean square = 0.02    n = 499\\ 
+Sum of squares = 9.43    Mean square = 0.02    n = 499\\ 
+Sum of squares = 8.83    Mean square = 0.02    n = 498\\ 
+
+Overall - 0.0189 ms 
+
+The mean squared error of this model was 1.89\%.
+
 
 \section{Modified Nearest Neighbor Search}
 \end{document}
