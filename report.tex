@@ -20,13 +20,9 @@
 \author{Richard Lee, Raj Ramamurthy, Jay Bensal\\
   NetIDs: rlee46, rmmrthy2, bensal2}
 
-% Title
+% title
 \maketitle
 
-% You should build a linear regression of violent crimes per population against
-% explanatory variables that don't have missing values. Check your regression
-% --- are there problem data points? which ones, and why? Does a Box-Cox
-%  transformation make things better?
 \section{Linear Regression}
 Upon building a linear regression, we noticed that there are a lot of data
 points which were missing values. In order to perform a more accurate linear
@@ -69,7 +65,7 @@ cv.lm(df=drop_cols, fit, m=4)
 \includegraphics[width=4in]{part1a.pdf} \caption{This graph shows the
 predicted fit across four different cross-validation folds of our data. Points
 with a good fit are close to the line x = y. Points that are further away from
-the line were predicted poorly.}\label{fig_container} 
+the line were predicted poorly.}
 \end{figure}
 
 Though this graph does a reasonable job of predicting fit, there are also
@@ -77,7 +73,7 @@ several problematic datapoints which you can see at the top right of the plot.
 Of the two thousand original data points, only three-hundred and nineteen were
 complete. It's possible that the low number of data points had an impact on the
 accuracy of our results because the model built wasn't as robust as it could've
-been. The metrics for four different folds are shown below.\\ 
+been. The metrics for four different folds are shown below.\\
 
 \noindent
 \begin{tabular}{l c r}
@@ -93,6 +89,7 @@ been. The metrics for four different folds are shown below.\\
 
 \subsection{R Code: Box-Cox Transformation}
 Here is the code we used to pick our lambda value.
+
 \begin{lstlisting}[language=r]
 #load in MASS library
 library('MASS')
@@ -105,8 +102,7 @@ boxcox(fit, lambda = seq(0, 1, 1/10), plotit=TRUE)
 \begin{figure}[H]
 \centering
 \includegraphics[width=3.8in]{boxcox.pdf}
-\caption{We picked a value of l = 0.3 based on this Box-Cox graph.
-}\label{fig_container} 
+\caption{We picked a value of l = 0.3 based on this Box-Cox graph.}
 \end{figure}
 
 \subsection{Applying the Box-Cox Transformation}
@@ -133,7 +129,10 @@ cv.lm(df=crime_lambda1, fit2, m=4)
 \begin{figure}[H]
 \centering
 \includegraphics[width=4in]{part1b.pdf}
-\caption{This graph shows the predicted fit across four different cross-validation folds of our data after performing the Box-Cox transformation. Points with a good fit are close to the line x = y. Points that are further away from the line were predicted poorly.}\label{fig_container} 
+\caption{This graph shows the predicted fit across four different
+cross-validation folds of our data after performing the Box-Cox transformation.
+Points with a good fit are close to the line x = y. Points that are further away
+from the line were predicted poorly.}
 \end{figure}
 
 At first glance, applying the Box-Cox transformation seems to have paid off. The
@@ -142,6 +141,7 @@ this model seems to have improved when predicting the most problematic data
 points for the previous model. It's possible that having a lower number of data
 points affected the Box-Cox transformation more than it effected the
 untransformed data. The metrics for four different folds are shown below.\\ 
+
 \noindent
 \begin{tabular}{l c r}
   Sum of squares = 11.8 & Mean square = 0.15 & n = 79\\
@@ -194,7 +194,7 @@ plot(as.numeric(results), as.numeric(wtel))
 \begin{figure}[H]
 \centering
 \includegraphics[width=4in]{knn.pdf}
-\caption{Plot two}\label{fig_container} 
+\caption{Scatter plot of KNN results}
 \end{figure}
 
 \section{Impute}
@@ -214,6 +214,10 @@ fit<-lm(V128 ~ V6+ V7+ V8+ V9+ V10+ V11+ V12+ V13+ V14+ V15+ V16+ V17+ V18+ V19+
 cv.lm(df=as.data.frame(imputed$data), fit, m=4)
 \end{lstlisting}
 
+From looking at this graph, we can conclude that the classifier is not very
+good with KNN. If this classifier was good, we would see a trend closer to a line
+with slope of roughly 1/10.
+
 \subsection{Impute plot}
 %H flag - (put it here)
 \begin{figure}[H]
@@ -222,7 +226,7 @@ cv.lm(df=as.data.frame(imputed$data), fit, m=4)
 \caption{This graph shows the predicted fit across four different
 cross-validation folds of our imputed data. Points with a good fit are close to
 the line x = y. Points that are further away from the line were predicted
-poorly.}\label{fig_container} 
+poorly.}
 \end{figure}
 
 The linear model based off of the imputed data provided the highest accuracy of
